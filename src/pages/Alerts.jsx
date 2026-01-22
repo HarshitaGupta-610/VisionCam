@@ -1,55 +1,32 @@
-import { useState } from "react";
 import logo from "../assets/LOGOCV.png";
 
 export default function Alerts() {
-  const [alerts] = useState([
-    { id: 1, type: "Drowsiness Detected", time: "10:12:45", status: "Critical", icon: "😴" },
-    { id: 2, type: "Phone Usage", time: "09:48:10", status: "Warning", icon: "📱" },
-    { id: 3, type: "Looked Away", time: "09:15:22", status: "Warning", icon: "👀" },
-  ]);
+
+  const data = [
+    { type: "Drowsiness", time: "10:23 AM", desc: "Eyes closed for 3.2 seconds" },
+    { type: "Face Direction", time: "9:50 AM", desc: "Looking left for too long" },
+    { type: "Phone Usage", time: "9:30 AM", desc: "Detected phone in hand" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-4">
+    <div className="min-h-screen bg-[#F5F9FF] px-6 py-6">
 
-      {/* NAVBAR */}
-      <div className="flex items-center justify-between py-3">
-        <div className="flex items-center gap-2">
-          <img src={logo} className="w-8 h-8 rounded-md" alt="logo" />
-          <h1 className="text-xl font-semibold text-blue-600">VisionCam</h1>
+      <div className="flex items-center gap-3 mb-6">
+        <img src={logo} className="w-10 h-10" />
+        <h1 className="text-xl font-bold text-blue-600">Alerts & History</h1>
+      </div>
+
+      {data.map((a, i) => (
+        <div
+          key={i}
+          className="bg-white p-4 rounded-xl shadow border border-gray-200 mb-4"
+        >
+          <h3 className="text-lg font-semibold text-red-500">{a.type}</h3>
+          <p className="text-gray-700">{a.desc}</p>
+          <p className="text-gray-500 text-sm mt-1">{a.time}</p>
         </div>
+      ))}
 
-        <a href="/monitor" className="text-blue-600 font-semibold text-sm underline">
-          Back
-        </a>
-      </div>
-
-      <h2 className="text-2xl font-bold text-gray-800 mt-4">Alerts & History</h2>
-      <p className="text-gray-500 mb-4">Recent detections from the monitoring</p>
-
-      {/* ALERT LIST */}
-      <div className="space-y-4">
-        {alerts.map((alert) => (
-          <div
-            key={alert.id}
-            className="bg-white shadow-md rounded-xl p-4 flex items-center justify-between border border-gray-100"
-          >
-            <div className="flex items-center gap-4">
-              <span className="text-3xl">{alert.icon}</span>
-              <div>
-                <p className="font-semibold text-gray-700">{alert.type}</p>
-                <p className="text-gray-400 text-sm">{alert.time}</p>
-              </div>
-            </div>
-
-            <span
-              className={`px-3 py-1 text-sm rounded-lg font-semibold
-                ${alert.status === "Critical" ? "bg-red-100 text-red-600" : "bg-yellow-100 text-yellow-600"}`}
-            >
-              {alert.status}
-            </span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

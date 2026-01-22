@@ -1,74 +1,47 @@
 import logo from "../assets/LOGOCV.png";
 
 export default function Dashboard() {
+
+  const profile = {
+    name: "User",
+    age: "22",
+    gender: "Male",
+    phone: "9876543210",
+    emergency: "Dad - 9871234560",
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-4">
+    <div className="min-h-screen bg-[#F5F9FF] px-6 py-6">
 
-      {/* NAVBAR */}
-      <div className="flex items-center justify-between py-3">
-        <div className="flex items-center gap-2">
-          <img src={logo} className="w-8 h-8 rounded-md" alt="logo" />
-          <h1 className="text-xl font-semibold text-blue-600">VisionCam</h1>
-        </div>
-
-        <a href="/" className="text-blue-600 font-semibold text-sm underline">
-          Home
-        </a>
+      <div className="flex items-center gap-3 mb-6">
+        <img src={logo} className="w-10 h-10" />
+        <h1 className="text-2xl font-bold text-blue-600">Dashboard</h1>
       </div>
 
-      <h2 className="text-3xl font-bold text-gray-800 mt-4">Dashboard</h2>
-      <p className="text-gray-500 mb-6">Driver safety insights</p>
+      {/* Profile */}
+      <div className="bg-white p-6 rounded-2xl shadow border border-blue-100 mb-6">
+        <h2 className="text-xl font-bold text-blue-700 mb-2">Profile</h2>
 
-      {/* STATS */}
-      <div className="grid grid-cols-2 gap-4">
+        {Object.entries(profile).map(([key, val]) => (
+          <p key={key} className="text-gray-700 mb-1">
+            <span className="font-semibold capitalize">{key}: </span> {val}
+          </p>
+        ))}
 
-        <div className="bg-white p-5 rounded-xl shadow-md flex flex-col items-center">
-          <span className="text-4xl">🚨</span>
-          <p className="text-gray-600 mt-2">Total Alerts</p>
-          <p className="text-2xl font-bold text-blue-600">14</p>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-md flex flex-col items-center">
-          <span className="text-4xl">😴</span>
-          <p className="text-gray-600 mt-2">Drowsiness</p>
-          <p className="text-2xl font-bold text-red-500">5</p>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-md flex flex-col items-center">
-          <span className="text-4xl">📱</span>
-          <p className="text-gray-600 mt-2">Phone Distractions</p>
-          <p className="text-2xl font-bold text-yellow-500">6</p>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-md flex flex-col items-center">
-          <span className="text-4xl">👀</span>
-          <p className="text-gray-600 mt-2">Off-road Glances</p>
-          <p className="text-2xl font-bold text-purple-500">3</p>
-        </div>
-
+        <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-blue-700">
+          Edit Profile
+        </button>
       </div>
 
-      {/* SUMMARY */}
-      <div className="bg-white mt-8 p-5 rounded-xl shadow-md">
-        <h3 className="text-lg font-semibold text-gray-700 mb-3">Summary</h3>
+      {/* Family Contacts */}
+      <div className="bg-white p-6 rounded-2xl shadow border border-blue-100">
+        <h2 className="text-xl font-bold text-blue-700 mb-4">Emergency Contacts</h2>
 
-        <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-          <div className="h-full bg-red-400 w-[35%]"></div>
-        </div>
+        <p className="text-gray-700">Dad – 9871234560</p>
 
-        <p className="text-sm text-gray-500 mt-2">
-          High alert activity detected today.
-        </p>
-
-        <div className="mt-4 space-y-2">
-          <a href="/monitor" className="text-blue-500 underline block">
-            Go to Monitor
-          </a>
-
-          <a href="/alerts" className="text-blue-500 underline block">
-            View Alerts
-          </a>
-        </div>
+        <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-blue-700">
+          Add Contact
+        </button>
       </div>
 
     </div>

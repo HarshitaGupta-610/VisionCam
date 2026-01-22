@@ -2,83 +2,71 @@ import { useState, useEffect } from "react";
 import logo from "../assets/LOGOCV.png";
 
 export default function Monitor() {
+
   const [time, setTime] = useState("");
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setInterval(() => {
       const now = new Date();
-      const formatted = now.toLocaleTimeString("en-US", {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-      setTime(formatted);
+      setTime(
+        now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+      );
     }, 1000);
-
-    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="min-h-screen bg-white px-6 pt-4 flex flex-col">
+    <div className="min-h-screen bg-white px-6 py-4">
 
-      {/* NAVBAR */}
-      <div className="flex items-center justify-between py-3">
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-6">
+        
         <div className="flex items-center gap-2">
-          <img src={logo} className="w-8 h-8 rounded-md" alt="logo" />
-          <h1 className="text-xl font-semibold text-blue-600">VisionCam</h1>
+          <img src={logo} className="w-10 h-10" />
+          <h1 className="text-xl font-bold text-blue-600">VisionCam</h1>
         </div>
 
-        <div className="flex items-center gap-4 text-gray-600">
-          <span className="font-medium">{time}</span>
-          <span className="text-xl">⚙️</span>
+        <div className="flex items-center gap-4">
+          <span className="text-gray-600 font-medium">{time}</span>
+
+          <span
+            onClick={() => (window.location.href = "/settings")}
+            className="material-icons-outlined text-3xl text-gray-600 cursor-pointer hover:text-blue-600 transition"
+          >
+            settings
+          </span>
         </div>
+
       </div>
 
-      {/* CAMERA PREVIEW */}
-      <div className="bg-blue-50 border border-blue-100 shadow-inner rounded-2xl flex flex-col items-center justify-center h-80 mt-4">
-        <span className="text-5xl text-blue-300">👁️</span>
-        <p className="text-gray-700 font-medium mt-2">Camera Preview</p>
-        <p className="text-gray-400 text-sm">Press Start to begin monitoring</p>
+      {/* Camera Preview */}
+      <div className="w-full h-80 bg-blue-50 rounded-2xl border border-blue-100 shadow-inner flex flex-col justify-center items-center">
+        <div className="w-24 h-24 bg-blue-100 rounded-xl"></div>
+        <p className="mt-3 text-gray-600">Camera Preview</p>
       </div>
 
-      {/* STATUS CARDS */}
+      {/* Status */}
       <div className="grid grid-cols-3 gap-4 mt-6">
 
-        <div className="bg-white shadow-md rounded-xl py-4 flex flex-col items-center">
-          <span className="text-2xl text-green-500">👁️</span>
-          <p className="text-gray-600 text-sm mt-1">Eye Status</p>
-          <p className="text-green-600 text-sm font-semibold mt-1">Open</p>
-        </div>
-
-        <div className="bg-white shadow-md rounded-xl py-4 flex flex-col items-center">
-          <span className="text-2xl text-blue-500">➡️</span>
-          <p className="text-gray-600 text-sm mt-1">Face Direction</p>
-          <p className="text-blue-600 text-sm font-semibold mt-1">Forward</p>
-        </div>
-
-        <div className="bg-white shadow-md rounded-xl py-4 flex flex-col items-center">
-          <span className="text-2xl text-green-500">📱</span>
-          <p className="text-gray-600 text-sm mt-1">Phone</p>
-          <p className="text-green-600 text-sm font-semibold mt-1">Safe</p>
-        </div>
+        {[
+          ["Drowsiness Detection", "Stable"],
+          ["Face Direction", "Forward"],
+          ["Phone Usage", "Safe"],
+        ].map(([title, status]) => (
+          <div key={title} className="bg-white rounded-xl p-4 shadow border border-gray-200 text-center">
+            <h3 className="text-sm font-semibold text-gray-700">{title}</h3>
+            <p className="mt-2 text-blue-600 font-bold">{status}</p>
+          </div>
+        ))}
 
       </div>
 
-      {/* BUTTONS */}
-      <button className="mt-6 bg-blue-600 hover:bg-blue-700 text-white w-full py-4 rounded-xl shadow-lg font-semibold">
+      <button className="mt-8 w-full py-4 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 active:scale-95 text-lg font-semibold">
         Start Monitoring
       </button>
-
-      <div className="mt-4 text-center space-y-2">
-        <a href="/alerts" className="text-blue-500 text-sm underline block">
-          View Alerts & History
-        </a>
-
-        <a href="/dashboard" className="text-blue-500 text-sm underline block">
-          Go to Dashboard
-        </a>
-      </div>
 
     </div>
   );
