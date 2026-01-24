@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import {z} from "zod";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { UserModel } from "./db";
 import { UserType } from "./db";
 import dotenv from "dotenv";
@@ -94,9 +94,11 @@ app.post("/api/v1/signin" , async (req,res)=>{
   throw new Error("JWT_SECRET missing");
    }
    if(passwordMatch){
-    const token= jwt.sign({
-      id: existingUser._id
-    }, JWT_SECRET)
+    const token = jwt.sign(
+  { id: existingUser._id },
+  JWT_SECRET,
+  { expiresIn: "7d" }
+);
 
 
     res.json({
@@ -110,5 +112,39 @@ app.post("/api/v1/signin" , async (req,res)=>{
 
 
 })
+app.get("/api/v1/profile", async (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Token missing" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+  return res.status(401).json({ message: "Token missing" });
+}
+
+  try {
+    if (!JWT_SECRET) throw new Error("JWT missing");
+
+    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+
+if (typeof decoded === "string") {
+  return res.status(401).json({ message: "Invalid token" });
+}
+
+const user = await UserModel.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
+  } catch {
+    res.status(401).json({ message: "Invalid token" });
+  }
+});
+
+
 
 app.listen(3000)
