@@ -1,6 +1,6 @@
 import { useState } from "react";
 import logo from "../assets/LOGOCV.png";
-
+//signup page 
 export default function Signup() {
   const [f, setF] = useState({
     name: "",
