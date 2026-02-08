@@ -1,28 +1,48 @@
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
 export default function UserType() {
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen bg-[#F5F9FF] flex justify-center items-center px-6">
-
-      <div className="bg-white p-8 rounded-3xl shadow-xl border border-blue-100 w-full max-w-md">
-
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-8">
+    <div
+      className="min-h-screen flex justify-center items-center px-6 transition-colors duration-300"
+      style={{ background: "var(--bg-page)" }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="card-solid w-full max-w-md p-10 sm:p-12 text-center"
+        style={{ boxShadow: "var(--shadow-card)" }}
+      >
+        <h2
+          className="text-2xl font-bold mb-10 text-gradient"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           Continue as
         </h2>
-
-        <button
-          onClick={() => (window.location.href = "/login")}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl mb-4 text-lg shadow hover:bg-blue-700 active:scale-95"
-        >
-          Existing User
-        </button>
-
-        <button
-          onClick={() => (window.location.href = "/signup")}
-          className="w-full border border-blue-600 text-blue-600 py-3 rounded-xl text-lg shadow hover:bg-blue-50 active:scale-95"
-        >
-          New User
-        </button>
-
-      </div>
+        <div className="space-y-4">
+          <motion.button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="btn-primary w-full py-4 text-lg rounded-2xl"
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Existing User
+          </motion.button>
+          <motion.button
+            type="button"
+            onClick={() => navigate("/signup")}
+            className="btn-secondary w-full py-4 text-lg rounded-2xl border-2"
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            New User
+          </motion.button>
+        </div>
+      </motion.div>
     </div>
   );
 }

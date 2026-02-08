@@ -1,27 +1,35 @@
-"""
-Central configuration for VisionCam ML backend.
-Tune thresholds and behaviour here without editing model code.
-"""
-
-# ----- Drowsiness (blink + yawn) -----
+# ---------- DROWSINESS (EYES + BLINKS) ----------
+EAR_CLOSE_THRESH = 0.22
+EAR_OPEN_THRESH = 0.27
+MIN_BLINK_FRAMES = 2
 EAR_CLOSED_THRESHOLD = 0.25       # Eye Aspect Ratio below this = eye closed
-MAR_YAWN_THRESHOLD = 0.5          # Mouth Aspect Ratio above this = yawn
 BLINK_CONSEC_FRAMES = 3           # Min consecutive frames "closed" to count as blink
-YAWN_CONSEC_FRAMES = 15           # Min consecutive frames "open mouth" to count as yawn
-DROWSY_BLINK_WINDOW_SEC = 20      # Window (seconds) to count blinks for drowsiness
-DROWSY_BLINK_COUNT = 3            # Blinks in window above → flag drowsy
+DROWSY_BLINK_WINDOW_SEC = 20
+DROWSY_BLINK_COUNT = 3
 
-# ----- Distraction (head pose) -----
-YAW_LIMIT_DEG = 30                # |yaw| > this → looking left/right
-PITCH_LIMIT_DEG = 20              # |pitch| > this → looking up/down
-LOOK_AWAY_CONSEC_FRAMES = 10      # Min consecutive "looking away" frames to flag
+# ---------- YAWNING ----------
+# Threshold applies to the chosen MAR measure (raw vertical/horizontal by default)
+MAR_YAWN_THRESHOLD = 0.45
+# Minimum duration (seconds) that MAR must stay above threshold to count as a yawn
+YAWN_MIN_DURATION_SEC = 0.7
+YAWN_COOLDOWN_SEC = 2.0
+# Optional behaviors
+MAR_USE_NORMALIZED = False  # If True, MAR will be divided by face height (may produce very small values)
+YAWN_DEBUG = True  # Print per-frame MAR/debug info to ML logs
+# Auto-tuning of the yawn threshold using running baseline statistics
+AUTO_TUNE_YAWN_THRESHOLD = False
+MAR_BASELINE_WINDOW = 50  # frames to keep for baseline MAR statistics
+# If mouth vertical / face_height < MOUTH_CLOSED_NORM we consider mouth closed and suppress yawns
+MOUTH_CLOSED_NORM = 0.12
 
-# ----- Phone usage -----
-PHONE_CONFIDENCE_THRESHOLD = 0.5  # Detector confidence above this = phone
-PHONE_CONSEC_FRAMES = 15          # Min consecutive frames with phone to flag
+# ---------- DISTRACTION / HEAD POSE ----------
+YAW_LIMIT_DEG = 18        # max yaw rotation in degrees
+PITCH_LIMIT_DEG = 14    # max pitch rotation in degrees
+# ROLL_LIMIT_DEG = 10       # max roll rotation in degrees
+LOOK_AWAY_CONSEC_FRAMES = 4  # consecutive frames to consider looking away
 
-# ----- General -----
-INPUT_WIDTH = 640                 # Resize frame width before inference
-INPUT_HEIGHT = 480                # Resize frame height
-FRAME_SKIP = 1                    # Process every Nth frame (1 = all; 2 = half)
-ASSUMED_FPS = 30                  # Used for drowsiness blink-window (seconds -> frames)
+# ---------- GENERAL ----------
+INPUT_WIDTH = 640
+INPUT_HEIGHT = 480
+ASSUMED_FPS = 30   # 🔥 MUST match frontend
+FRAME_SKIP =1

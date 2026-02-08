@@ -1,5 +1,163 @@
 @import "tailwindcss";
+
+/* --------------------------------------------------------------------------- */
+/* Design tokens & theme (light/dark)                                          */
+/* --------------------------------------------------------------------------- */
+:root {
+  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --transition-theme: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Light mode */
+.light {
+  --bg-page: linear-gradient(160deg, #eef2ff 0%, #e0e7ff 30%, #f5f3ff 70%, #faf5ff 100%);
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card-solid: #ffffff;
+  --bg-nav: rgba(255, 255, 255, 0.8);
+  --border-subtle: rgba(99, 102, 241, 0.15);
+  --text-primary: #1e1b4b;
+  --text-secondary: #4c1d95;
+  --text-muted: #6b7280;
+  --primary: #5b21b6;
+  --primary-hover: #6d28d9;
+  --accent: #7c3aed;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --shadow-soft: 0 4px 20px -4px rgba(91, 33, 182, 0.12), 0 10px 24px -8px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 8px 32px -8px rgba(91, 33, 182, 0.18), 0 20px 40px -12px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 40px -8px rgba(124, 58, 237, 0.4);
+  --glass: rgba(255, 255, 255, 0.7);
+  --gradient-primary: linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #8b5cf6 100%);
+}
+
+/* Dark mode */
+.dark {
+  --bg-page: linear-gradient(165deg, #0c0a1d 0%, #1e1b4b 40%, #312e81 70%, #0f0a1e 100%);
+  --bg-card: rgba(30, 27, 75, 0.85);
+  --bg-card-solid: #1e1b4b;
+  --bg-nav: rgba(15, 10, 30, 0.88);
+  --border-subtle: rgba(139, 92, 246, 0.2);
+  --text-primary: #f5f3ff;
+  --text-secondary: #c4b5fd;
+  --text-muted: #8b5cf6;
+  --primary: #a78bfa;
+  --primary-hover: #c4b5fd;
+  --accent: #c4b5fd;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --shadow-soft: 0 8px 32px -8px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 12px 40px -12px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 48px -8px rgba(167, 139, 250, 0.4);
+  --glass: rgba(49, 46, 129, 0.6);
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #a78bfa 100%);
+}
+
+/* --------------------------------------------------------------------------- */
+/* Base                                                                        */
+/* --------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  transition: var(--transition-theme);
+  min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Utility classes                                                             */
+/* --------------------------------------------------------------------------- */
 .input {
-  @apply w-full py-3 px-4 border border-gray-300 rounded-xl 
-         focus:ring-2 focus:ring-blue-400 outline-none;
+  @apply w-full py-3 px-4 rounded-xl outline-none transition-all duration-200;
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+.input:focus {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+  border-color: var(--accent);
+}
+
+/* Buttons */
+.btn-primary {
+  @apply py-3 px-6 rounded-2xl font-semibold transition-all duration-300 active:scale-[0.98];
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 4px 14px -2px rgba(124, 58, 237, 0.4);
+}
+.btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 8px 24px -4px rgba(124, 58, 237, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  @apply py-3 px-6 rounded-xl font-semibold border transition-all duration-200 active:scale-[0.98];
+  border-color: var(--primary);
+  color: var(--primary);
+  background: transparent;
+}
+.btn-secondary:hover {
+  background: var(--glass);
+}
+
+/* Card */
+.card {
+  border-radius: 16px;
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-theme);
+}
+
+.card-solid {
+  border-radius: 20px;
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-theme);
+}
+.card-solid:hover {
+  box-shadow: var(--shadow-card);
+}
+
+/* Gradient text */
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pill / badge */
+.pill {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+/* Safe / Warning / Danger state colors (for status cards) */
+.state-safe { color: var(--success); }
+.state-warning { color: var(--warning); }
+.state-danger { color: var(--danger); }
+
+/* Icon circle with status tint */
+.icon-circle-safe { background: rgba(5, 150, 105, 0.15); color: var(--success); }
+.icon-circle-warning { background: rgba(217, 119, 6, 0.15); color: var(--warning); }
+.icon-circle-danger { background: rgba(220, 38, 38, 0.15); color: var(--danger); }
+
+/* Subtle gradient motion for layout background */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.bg-gradient-motion {
+  background-size: 200% 200%;
+  animation: gradientShift 18s ease infinite;
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import logo from "../assets/LOGOCV.png";
-//signup page 
+
 export default function Signup() {
   const [f, setF] = useState({
     name: "",
@@ -14,11 +15,9 @@ export default function Signup() {
 
   async function signup() {
     try {
-      const res = await fetch("http://localhost:3000/api/v1/signup", {
+      const res = await fetch("http://localhost:3001/api/v1/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: f.name,
           age: f.age,
@@ -29,71 +28,80 @@ export default function Signup() {
           password: f.password,
         }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         alert(data.message || "Signup failed");
         return;
       }
-
       alert("Signup successful 🎉");
-      window.location.href = "/login"; // navigate after success
-
+      window.location.href = "/login";
     } catch (err) {
       alert("Server error. Try again later.");
       console.error(err);
     }
   }
+
+  const fields = [
+    ["name", "Name", "text"],
+    ["age", "Age", "text"],
+    ["phone", "Phone Number", "text"],
+    ["emergencyName", "Emergency Contact Name", "text"],
+    ["emergencyPhone", "Emergency Contact Number", "text"],
+    ["password", "Password", "password"],
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F5F9FF] flex justify-center items-center px-6">
-
-      <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border border-blue-100">
-
-        <img src={logo} className="w-24 h-24 mx-auto mb-6" />
-
-        <h2 className="text-2xl font-bold text-blue-600 text-center mb-6">
+    <div
+      className="min-h-screen flex justify-center items-center px-6 py-12 transition-colors duration-300"
+      style={{ background: "var(--bg-page)" }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="card-solid w-full max-w-md p-8 sm:p-10 rounded-3xl"
+        style={{ boxShadow: "var(--shadow-card)" }}
+      >
+        <div className="w-20 h-20 mx-auto mb-6 rounded-2xl overflow-hidden flex items-center justify-center" style={{ background: "var(--gradient-primary)", boxShadow: "var(--shadow-soft)" }}>
+          <img src={logo} alt="VisionCam" className="w-14 h-14 object-contain" />
+        </div>
+        <h2
+          className="text-2xl font-bold text-center mb-6 text-gradient"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           Create Account
         </h2>
-
-        {[
-          ["name", "Name"],
-          ["age", "Age"],
-          ["phone", "Phone Number"],
-          ["emergencyName", "Emergency Contact Name"],
-          ["emergencyPhone", "Emergency Contact Number"],
-          ["password", "Password"],
-        ].map(([key, label]) => (
-          <input
-            key={key}
-            placeholder={label}
-            type={key === "password" ? "password" : "text"}
-            className="w-full p-3 border rounded-xl mb-4 shadow-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            onChange={(e) => setF({ ...f, [key]: e.target.value })}
-          />
-        ))}
-
-        <select
-          value={f.gender}
-          onChange={(e) => setF({ ...f, gender: e.target.value })}
-          className="w-full p-3 border rounded-xl mb-4 shadow-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          <option value="">Select Gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-
-
-        <button
+        <div className="space-y-4 mb-5">
+          {fields.map(([key, label, type]) => (
+            <input
+              key={key}
+              placeholder={label}
+              type={type}
+              className="input rounded-2xl"
+              value={f[key]}
+              onChange={(e) => setF({ ...f, [key]: e.target.value })}
+            />
+          ))}
+          <select
+            value={f.gender}
+            onChange={(e) => setF({ ...f, gender: e.target.value })}
+            className="input rounded-2xl"
+          >
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <motion.button
           onClick={signup}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl shadow hover:bg-blue-700 active:scale-95"
+          className="btn-primary w-full py-3.5 rounded-2xl"
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
         >
           Sign Up
-        </button>
-
-      </div>
+        </motion.button>
+      </motion.div>
     </div>
   );
 }
-

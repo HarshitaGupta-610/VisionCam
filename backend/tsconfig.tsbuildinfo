@@ -1,1 +1,1 @@
-{"root":["./src/db.ts","./src/index.ts"],"version":"5.9.3"}
+{"root":["./src/db.ts","./src/index.ts","./src/models/emergencycontact.ts","./src/models/emergencyevent.ts","./src/models/telegramuser.ts","./src/models/warning.ts","./src/routes/emergencyroutes.ts","./src/services/callservice.ts","./src/services/riskengine.ts","./src/services/telegramservice.ts","./src/services/telegramsync.ts"],"version":"5.9.3"}

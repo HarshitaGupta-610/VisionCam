@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import logo from "../assets/LOGOCV.png";
 
 export default function Login() {
@@ -6,36 +7,25 @@ export default function Login() {
 
   async function login() {
     try {
-      const res = await fetch("http://localhost:3000/api/v1/signin", {
+      const res = await fetch("http://localhost:3001/api/v1/signin", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: form.name,
-          password: form.password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: form.name, password: form.password }),
       });
-
       const data = await res.json();
 
-      //USER DOES NOT EXIST or WRONG PASSWORD
       if (res.status === 403) {
         alert(data.message);
         return;
       }
-
-      // ANY OTHER ERROR
       if (!res.ok) {
         alert("Login failed");
         return;
       }
 
-      //SUCCESS
       localStorage.setItem("token", data.token);
-      alert("You are logged in!")
+      alert("You are logged in!");
       window.location.href = "/monitor";
-
     } catch (err) {
       alert("Server error. Try again later.");
       console.error(err);
@@ -43,38 +33,49 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F9FF] flex justify-center items-center px-6">
-
-      <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border border-blue-100">
-
-        <img src={logo} className="w-24 h-24 mx-auto mb-6" />
-
-        <h2 className="text-2xl font-bold text-blue-600 text-center mb-6">
+    <div
+      className="min-h-screen flex justify-center items-center px-6 py-12 transition-colors duration-300"
+      style={{ background: "var(--bg-page)" }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="card-solid w-full max-w-md p-8 sm:p-10 rounded-3xl"
+        style={{ boxShadow: "var(--shadow-card)" }}
+      >
+        <div className="w-20 h-20 mx-auto mb-6 rounded-2xl overflow-hidden flex items-center justify-center" style={{ background: "var(--gradient-primary)", boxShadow: "var(--shadow-soft)" }}>
+          <img src={logo} alt="VisionCam" className="w-14 h-14 object-contain" />
+        </div>
+        <h2
+          className="text-2xl font-bold text-center mb-6 text-gradient"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           Login
         </h2>
-
         <input
-          placeholder="Name"
-          className="w-full p-3 border rounded-xl mb-4 shadow-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Username"
+          className="input mb-4 rounded-2xl"
+          value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
-
         <input
           placeholder="Password"
           type="password"
-          className="w-full p-3 border rounded-xl mb-4 shadow-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="input mb-6 rounded-2xl"
+          value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
-
-        <button
+        <motion.button
           type="button"
           onClick={login}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl shadow hover:bg-blue-700 active:scale-95"
+          className="btn-primary w-full py-3.5 rounded-2xl"
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
         >
           Continue
-        </button>
-
-      </div>
+        </motion.button>
+      </motion.div>
     </div>
   );
 }

@@ -1,83 +1,27 @@
-import mongoose,{ model, Document, Schema } from "mongoose";
-import dotenv from "dotenv";
-
-
-dotenv.config();
-
+import mongoose from "mongoose";
 
 export const connectDB = async () => {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is not defined");
-  }
 
+  await mongoose.connect(process.env.MONGO_URI!);
 
-  try {
-    await mongoose.connect(process.env.DATABASE_URL);
-    console.log("MongoDB connected");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
-  }
+  console.log("✅ MongoDB connected");
 };
 
+//////////////////////////////////////////////////////
 
-const UserSchema = new Schema(
-  {
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      minlength: 2,
-      maxlength: 100,
-      trim: true,
-    },
+const userSchema = new mongoose.Schema({
 
-    age: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 120,
-    },
+  username:String,
+  age:Number,
+  gender:String,
+  phone:String,
 
-    gender: {
-      type: String,
-      required: true,
-      enum: ["male", "female", "other"],
-    },
+  emergencyname:String,
+  emergencyphone:String,
 
-    phone: {
-      type: String,
-      required: true,
-      match: /^[6-9]\d{9}$/,
-    },
+  password:String
 
-    emergencyname: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+},{timestamps:true});
 
-    emergencyphone: {
-      type: String,
-      required: true,
-      match: /^[6-9]\d{9}$/,
-    },
-
-    password: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true, // createdAt & updatedAt
-  }
-);
-export const UserModel= model("User" , UserSchema)
-
-
-export interface UserType extends Document {
-  username: string;
-  password: string;
-
-
-}// interface for existing user
+export const UserModel =
+  mongoose.model("User",userSchema);
