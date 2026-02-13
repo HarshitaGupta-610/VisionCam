@@ -29,6 +29,10 @@ app.use("/api/v1", emergencyRoutes);
 
 connectDB();
 
+function normalizePhone(value: string) {
+  return value.replace(/[^0-9+]/g, "");
+}
+
 //////////////////////////////////////////////////////
 // 🔐 SAFEST SECRET CHECK
 //////////////////////////////////////////////////////
@@ -74,10 +78,19 @@ app.post("/api/v1/signup", async (req: Request, res: Response) => {
   const data = parsed.data;
 
   try {
-    // Case insensitive search
-    const tgUser = await TelegramUser.findOne({
-      firstName: new RegExp(`^${data.emergencyname}$`, "i"),
+    const normalizedEmergencyPhone = normalizePhone(data.emergencyphone);
+
+    // Prefer phone match when the contact has shared it with the bot
+    let tgUser = await TelegramUser.findOne({
+      phone: normalizedEmergencyPhone,
     });
+
+    if (!tgUser) {
+      // Fallback: case-insensitive name match
+      tgUser = await TelegramUser.findOne({
+        firstName: new RegExp(`^${data.emergencyname}$`, "i"),
+      });
+    }
 
     if (!tgUser)
       return res.status(400).json({

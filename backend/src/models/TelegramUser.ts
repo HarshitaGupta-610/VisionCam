@@ -7,6 +7,8 @@ const telegramUserSchema = new mongoose.Schema({
     unique: true,
   },
   firstName: String,
+  username: String,
+  phone: String,
 });
 
 export default mongoose.model(
