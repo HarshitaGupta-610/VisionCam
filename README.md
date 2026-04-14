@@ -1,16 +1,89 @@
-# React + Vite
+# VisionCam
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+VisionCam is a driver safety monitoring project with three parts:
 
-Currently, two official plugins are available:
+- Frontend (React + Vite)
+- Backend (Node.js + Express + MongoDB + Telegram alerts)
+- ML API (FastAPI)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## What is deployed
 
-## React Compiler
+- Frontend calls backend using `VITE_BACKEND_API`
+- Frontend calls ML API using `VITE_API_BASE`
+- Backend sends Telegram messages after warning alarms (for repeated unsafe events)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 1) Frontend environment
 
-## Expanding the ESLint configuration
+Create `.env` in project root:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```env
+VITE_BACKEND_API=https://your-backend-domain.com
+VITE_API_BASE=https://your-ml-domain.com
+```
+
+Build and run frontend:
+
+```bash
+npm install
+npm run build
+npm run preview
+```
+
+## 2) Backend environment
+
+Create `backend/.env`:
+
+```env
+PORT=3001
+JWT_SECRET=replace_with_strong_secret
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/visioncam
+BOT_TOKEN=123456789:replace_with_telegram_bot_token
+CORS_ORIGIN=https://your-frontend-domain.com,http://localhost:5173
+BACKEND_URL=https://your-backend-domain.com
+```
+
+Build and run backend:
+
+```bash
+cd backend
+npm install
+npm run build
+npm start
+```
+
+Health check:
+
+- `GET /health` -> `{ "status": "ok" }`
+
+## 3) ML API deployment
+
+Install dependencies:
+
+```bash
+pip install -r ml/requirements.txt
+```
+
+Run ML API:
+
+```bash
+uvicorn ml.ml_server:app --host 0.0.0.0 --port 8000
+```
+
+Endpoints:
+
+- `GET /health`
+- `POST /api/detect`
+
+## Telegram alert flow
+
+1. Emergency contact must message your Telegram bot first.
+2. On signup, backend links emergency contact to Telegram chat id.
+3. Monitor sends warning events to backend when risky behavior is detected.
+4. Backend sends Telegram alert after threshold warnings in time window.
+
+## Deployed URL checklist
+
+1. Frontend deployed URL is added in backend `CORS_ORIGIN`.
+2. Frontend `.env` has correct backend and ML URLs.
+3. Backend has valid `MONGO_URI`, `JWT_SECRET`, and `BOT_TOKEN`.
+4. Telegram bot has received at least one message from contact users.

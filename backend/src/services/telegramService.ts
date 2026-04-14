@@ -1,11 +1,15 @@
 import axios from "axios";
 
-const BOT = process.env.BOT_TOKEN!;
+const BOT = process.env.BOT_TOKEN;
 
 export async function sendTelegramAlert(
   chatIds: string[],
   message: string
 ) {
+  if (!BOT) {
+    throw new Error("BOT_TOKEN missing in environment");
+  }
+
   for (const chatId of chatIds) {
     try {
       await axios.post(
@@ -18,7 +22,7 @@ export async function sendTelegramAlert(
 
       console.log("✅ Alert sent to:", chatId);
 
-    } catch (err:any) {
+    } catch (err: any) {
 
       console.log("❌ Telegram send error:");
 

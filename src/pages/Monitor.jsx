@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import API from "../api";
 
 const API_BASE =
   import.meta.env.VITE_API_BASE || "http://localhost:8000";
-const BACKEND_API = "http://localhost:3001"; // NODE BACKEND
+const BACKEND_API = API;
 const CAPTURE_INTERVAL_MS = 350;
 const ML_HELP =
   "Start the ml (see ml/README.md): uvicorn ml.ml_server:app --port 8000";

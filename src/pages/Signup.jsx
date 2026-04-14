@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import logo from "../assets/LOGOCV.png";
+import API from "../api";
 
 export default function Signup() {
   const [f, setF] = useState({
@@ -15,7 +16,7 @@ export default function Signup() {
 
   async function signup() {
     try {
-      const res = await fetch("http://localhost:3001/api/v1/signup", {
+      const res = await fetch(`${API}/api/v1/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

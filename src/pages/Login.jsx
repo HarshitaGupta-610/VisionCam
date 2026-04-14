@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import logo from "../assets/LOGOCV.png";
+import API from "../api";
 
 export default function Login() {
   const [form, setForm] = useState({ name: "", password: "" });
 
   async function login() {
     try {
-      const res = await fetch("http://localhost:3001/api/v1/signin", {
+      const res = await fetch(`${API}/api/v1/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: form.name, password: form.password }),

@@ -1,7 +1,7 @@
 import axios from "axios";
 import TelegramUser from "../models/TelegramUser";
 
-const BOT = process.env.BOT_TOKEN!;
+const BOT = process.env.BOT_TOKEN;
 
 let lastUpdateId = 0;
 
@@ -16,6 +16,10 @@ function extractPhoneFromText(text?: string) {
 }
 
 export async function syncTelegramUsers() {
+  if (!BOT) {
+    return;
+  }
+
   try {
 
     const res = await axios.get(
@@ -32,11 +36,13 @@ export async function syncTelegramUsers() {
 
     if (!updates.length) return;
 
-    for (const update of updates) {
+    for (const tgUpdate of updates) {
 
-      lastUpdateId = update.update_id;
+      if (typeof tgUpdate.update_id === "number") {
+        lastUpdateId = tgUpdate.update_id;
+      }
 
-      const msg = update.message;
+      const msg = tgUpdate.message;
       if (!msg) continue;
 
       const chatId = String(msg.chat.id);
@@ -46,17 +52,17 @@ export async function syncTelegramUsers() {
 
       console.log("Saving user:", chatId, firstName); // DEBUG
 
-      const update: Record<string, string> = {
+      const updateDoc: Record<string, string> = {
         chatId,
         firstName,
       };
 
-      if (username) update.username = username;
-      if (phone) update.phone = normalizePhone(phone);
+      if (username) updateDoc.username = username;
+      if (phone) updateDoc.phone = normalizePhone(phone);
 
       await TelegramUser.updateOne(
         { chatId },
-        { $set: update },
+        { $set: updateDoc },
         { upsert: true }
       );
     }

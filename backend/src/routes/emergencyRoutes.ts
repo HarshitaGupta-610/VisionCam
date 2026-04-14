@@ -79,6 +79,18 @@ router.post("/", async (req: Request, res: Response) => {
       .map(c => c.chatId)
       .filter(Boolean) as string[];
 
+    if (!chatIds.length) {
+      return res.status(400).json({
+        message: "No Telegram chat IDs found for emergency contacts",
+      });
+    }
+
+    if (!process.env.BOT_TOKEN) {
+      return res.status(500).json({
+        message: "BOT_TOKEN is not configured on server",
+      });
+    }
+
     /////////////////////////////////////////////////
     // TELEGRAM MESSAGE
     /////////////////////////////////////////////////

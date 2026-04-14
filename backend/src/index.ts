@@ -24,10 +24,25 @@ import { sendTelegramAlert } from "./services/telegramService";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
-app.use("/api/v1", emergencyRoutes);
+
+const rawCorsOrigins = process.env.CORS_ORIGIN || "*";
+const corsOrigins = rawCorsOrigins
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: corsOrigins.includes("*") ? true : corsOrigins,
+    credentials: true,
+  })
+);
 
 connectDB();
+
+app.get("/health", (_req: Request, res: Response) => {
+  res.json({ status: "ok" });
+});
 
 function normalizePhone(value: string) {
   return value.replace(/[^0-9+]/g, "");
@@ -294,7 +309,11 @@ Phone: ${user.phone}
 
 Please check immediately.`;
 
-      await sendTelegramAlert(chatIds, message);
+      if (!process.env.BOT_TOKEN) {
+        console.warn("BOT_TOKEN missing. Telegram alert skipped.");
+      } else if (chatIds.length > 0) {
+        await sendTelegramAlert(chatIds, message);
+      }
 
       await EmergencyEvent.create({
         userId,
