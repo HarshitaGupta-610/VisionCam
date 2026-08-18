@@ -1,89 +1,253 @@
 # VisionCam
 
-VisionCam is a driver safety monitoring project with three parts:
+![VisionCam workflow](Image.png)
 
-- Frontend (React + Vite)
-- Backend (Node.js + Express + MongoDB + Telegram alerts)
-- ML API (FastAPI)
+VisionCam is a driver safety monitoring system designed to help detect unsafe driving behavior in real time using a webcam and AI-based analysis. It watches for signs such as drowsiness, distraction, and head movement issues while a driver is on the road, then raises alerts and can notify emergency contacts through Telegram.
 
-## What is deployed
+The project is split into three connected parts:
 
-- Frontend calls backend using `VITE_BACKEND_API`
-- Frontend calls ML API using `VITE_API_BASE`
-- Backend sends Telegram messages after warning alarms (for repeated unsafe events)
+- Frontend: React + Vite app for login, signup, dashboard, alerts, and live monitoring
+- Backend: Node.js + Express API for authentication, user data, warnings, and emergency alerts
+- ML service: Python + FastAPI service that processes camera frames to detect drowsiness and distraction
 
-## 1) Frontend environment
+---
 
-Create `.env` in project root:
+## What VisionCam is about
 
-```env
-VITE_BACKEND_API=https://your-backend-domain.com
-VITE_API_BASE=https://your-ml-domain.com
+VisionCam helps create a safer driving experience by combining computer vision with a web dashboard.
+
+A typical flow looks like this:
+
+1. A driver signs up through the web app.
+2. The frontend opens the webcam in the monitoring page.
+3. Each frame is sent to the ML API for analysis.
+4. The model checks for signs like:
+   - eyes closed for too long
+   - yawning
+   - turning head away from the road
+   - distracted behavior
+5. When risky behavior is detected, the frontend triggers an alert and sends a warning to the backend.
+6. The backend stores the event and can notify the emergency contact through Telegram if the pattern continues.
+
+This makes the system not just a detection model, but a full alerting workflow for driver monitoring.
+
+---
+
+## Tech stack
+
+| Layer | Technology | Purpose |
+| --- | --- | --- |
+| Frontend | React + Vite + JavaScript | User interface, auth screens, dashboard, monitoring page |
+| UI styling | CSS / Tailwind-like custom styling | Dashboard and app design |
+| Backend | Node.js + Express + TypeScript | Auth, API routes, user management, warning handling |
+| Database | MongoDB + Mongoose | Stores users, warnings, emergency events, and contact info |
+| ML | Python + FastAPI | Processes webcam frames and predicts drowsiness/distraction |
+| CV / AI | OpenCV + MediaPipe / face landmark models | Detects face landmarks, eye state, mouth movement, and head pose |
+| Alerts | Telegram Bot API | Sends emergency notifications to family or contacts |
+| Auth | JWT + bcrypt | User login and secure token-based session handling |
+| Frontend env config | Vite env vars | Connects frontend to local or deployed backend/ML services |
+
+---
+
+## How the parts work together
+
+The app is connected like this:
+
+- The frontend reads values from environment variables such as:
+  - `VITE_BACKEND_API`
+  - `VITE_API_BASE`
+- The webcam monitoring page captures frames and sends them to the Python ML API at `http://localhost:8000/api/detect`.
+- The ML API returns analysis such as:
+  - eye status
+  - drowsiness detection
+  - head direction
+  - distraction flags
+- The web app decides whether to show an alert on screen and trigger a warning event.
+- The backend receives warning events at routes like `/api/v1/warning`.
+- It stores the event in MongoDB and sends Telegram alert messages if the warning threshold is reached.
+
+So the system is a loop:
+
+Camera feed -> ML detection -> frontend alerting -> backend warning storage -> Telegram contact alert
+
+---
+
+## Run VisionCam on your laptop
+
+Follow these steps from a terminal on your machine.
+
+### 1) Clone the repository
+
+```bash
+git clone <https://github.com/HarshitaGupta-610/VisionCam>
+cd VisionCam
 ```
 
-Build and run frontend:
+### 2) Install frontend dependencies
 
 ```bash
 npm install
-npm run build
-npm run preview
 ```
 
-## 2) Backend environment
+### 3) Set up the frontend environment
 
-Create `backend/.env`:
+Create a `.env` file in the project root:
 
 ```env
-PORT=3001
-JWT_SECRET=replace_with_strong_secret
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/visioncam
-BOT_TOKEN=123456789:replace_with_telegram_bot_token
-CORS_ORIGIN=https://your-frontend-domain.com,http://localhost:5173
-BACKEND_URL=https://your-backend-domain.com
+VITE_BACKEND_API=http://localhost:3001
+VITE_API_BASE=http://localhost:8000
 ```
 
-Build and run backend:
+This tells the frontend where to find the backend and ML API while running locally.
+
+### 4) Install backend dependencies
 
 ```bash
 cd backend
 npm install
-npm run build
-npm start
 ```
 
-Health check:
+Create a `backend/.env` file:
 
-- `GET /health` -> `{ "status": "ok" }`
+```env
+PORT=3001
+JWT_SECRET=your_strong_secret_here
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/VisionCam?retryWrites=true&w=majority&appName=VisionCam
+BOT_TOKEN=123456789:replace_with_telegram_bot_token
+CORS_ORIGIN=http://localhost:5173
+BACKEND_URL=http://localhost:3001
+```
 
-## 3) ML API deployment
+> If you are using a local MongoDB instance, replace `MONGO_URI` with your local connection string.
 
-Install dependencies:
+### 5) Start the backend
+
+From the `backend` folder:
+
+```bash
+npm run dev
+```
+
+The backend should start on:
+
+```text
+http://localhost:3001
+```
+
+You can check health with:
+
+```bash
+curl http://localhost:3001/health
+```
+
+Expected response:
+
+```json
+{ "status": "ok" }
+```
+
+### 6) Start the ML service
+
+Open a new terminal and go back to the project root:
+
+```bash
+python -m venv .venv
+```
+
+On Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+On macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Then install the ML dependencies:
 
 ```bash
 pip install -r ml/requirements.txt
 ```
 
-Run ML API:
+Start the ML API:
 
 ```bash
-uvicorn ml.ml_server:app --host 0.0.0.0 --port 8000
+uvicorn ml.ml_server:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Endpoints:
+The ML service should be available at:
 
-- `GET /health`
-- `POST /api/detect`
+```text
+http://localhost:8000
+```
 
-## Telegram alert flow
+### 7) Start the frontend
 
-1. Emergency contact must message your Telegram bot first.
-2. On signup, backend links emergency contact to Telegram chat id.
-3. Monitor sends warning events to backend when risky behavior is detected.
-4. Backend sends Telegram alert after threshold warnings in time window.
+Open another terminal in the project root:
 
-## Deployed URL checklist
+```bash
+npm run dev
+```
 
-1. Frontend deployed URL is added in backend `CORS_ORIGIN`.
-2. Frontend `.env` has correct backend and ML URLs.
-3. Backend has valid `MONGO_URI`, `JWT_SECRET`, and `BOT_TOKEN`.
-4. Telegram bot has received at least one message from contact users.
+The frontend should start with Vite and open locally in the browser, usually at:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Important local setup notes
+
+- The frontend must be able to reach the backend and ML API over localhost.
+- Make sure your browser allows webcam access.
+- The backend must have a valid MongoDB connection string.
+- The Telegram bot only works if the emergency contact has messaged the bot before signup.
+- If `BOT_TOKEN` is missing, Telegram alerts will not be sent.
+
+---
+
+## Project explanation
+
+VisionCam is essentially a full-stack driver safety monitoring tool.
+
+The idea is simple but practical:
+
+- The frontend gives the user a clean interface for sign up, login, and monitoring.
+- The backend handles identity and stores important data securely.
+- The ML model watches the driver’s face and determines if they are sleepy or distracted.
+- The app converts those detections into actionable warnings.
+- The backend saves event history and sends notifications to a person who can help in an emergency.
+
+This project is a good example of how frontend, backend, AI, and communication services can work together in a real-time safety application.
+
+---
+
+## Quick start summary
+
+If you want the shortest version:
+
+```bash
+git clone <https://github.com/HarshitaGupta-610/VisionCam>
+cd VisionCam
+npm install
+
+cd backend
+npm install
+# create backend/.env
+npm run dev
+
+cd ..
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r ml/requirements.txt
+uvicorn ml.ml_server:app --host 0.0.0.0 --port 8000 --reload
+
+cd ..
+npm run dev
+```
+
+
