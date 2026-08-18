@@ -17,22 +17,6 @@ The project is split into three connected parts:
 
 VisionCam helps create a safer driving experience by combining computer vision with a web dashboard.
 
-A typical flow looks like this:
-
-1. A driver signs up through the web app.
-2. The frontend opens the webcam in the monitoring page.
-3. Each frame is sent to the ML API for analysis.
-4. The model checks for signs like:
-   - eyes closed for too long
-   - yawning
-   - turning head away from the road
-   - distracted behavior
-5. When risky behavior is detected, the frontend triggers an alert and sends a warning to the backend.
-6. The backend stores the event and can notify the emergency contact through Telegram if the pattern continues.
-
-This makes the system not just a detection model, but a full alerting workflow for driver monitoring.
-
----
 
 ## Tech stack
 
@@ -211,44 +195,7 @@ http://localhost:5173
 
 ---
 
-## Project explanation
 
-VisionCam is essentially a full-stack driver safety monitoring tool.
 
-The idea is simple but practical:
-
-- The frontend gives the user a clean interface for sign up, login, and monitoring.
-- The backend handles identity and stores important data securely.
-- The ML model watches the driver’s face and determines if they are sleepy or distracted.
-- The app converts those detections into actionable warnings.
-- The backend saves event history and sends notifications to a person who can help in an emergency.
-
-This project is a good example of how frontend, backend, AI, and communication services can work together in a real-time safety application.
-
----
-
-## Quick start summary
-
-If you want the shortest version:
-
-```bash
-git clone <https://github.com/HarshitaGupta-610/VisionCam>
-cd VisionCam
-npm install
-
-cd backend
-npm install
-# create backend/.env
-npm run dev
-
-cd ..
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r ml/requirements.txt
-uvicorn ml.ml_server:app --host 0.0.0.0 --port 8000 --reload
-
-cd ..
-npm run dev
-```
 
 
