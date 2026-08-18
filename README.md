@@ -1,6 +1,6 @@
 # VisionCam
+![Overview](working.png)
 
-![VisionCam workflow](Image.png)
 
 VisionCam is a driver safety monitoring system designed to help detect unsafe driving behavior in real time using a webcam and AI-based analysis. It watches for signs such as drowsiness, distraction, and head movement issues while a driver is on the road, then raises alerts and can notify emergency contacts through Telegram.
 
@@ -12,6 +12,7 @@ The project is split into three connected parts:
 
 ---
 
+![VisionCam workflow](Image.png)
 ## What VisionCam is about
 
 VisionCam helps create a safer driving experience by combining computer vision with a web dashboard.
